@@ -1,0 +1,35 @@
+{
+  "name": "mean_stack_shopping_app",
+  "version": "1.0.0",
+  "description": "This is shopping app with the use of mern stack",
+  "main": "index.js",
+  "engines": {
+    "node": "10.10.0",
+    "npm": "6.4.1"
+  },
+  "scripts": {
+    "client-install": "npm install --prefix client",
+    "start": "node server.js",
+    "server": "nodemon server.js",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^3.0.0",
+    "body-parser": "^1.18.3",
+    "concurrently": "^3.6.1",
+    "cookie-session": "^2.0.0-beta.3",
+    "express": "^4.16.3",
+    "jsonwebtoken": "^8.3.0",
+    "mongoose": "^5.2.8",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "react-bootstrap-table": "^4.3.1",
+    "react-vis": "^1.11.4"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.3"
+  }
+}
