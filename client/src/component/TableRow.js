@@ -26,11 +26,12 @@ class Table extends React.Component {
     };
     return (
       <div>
+        <div className="text-align-center margin-top-bottom-10 font14 font-bold">Click on row to delete ! </div>
         <BootstrapTable data={this.props.data} options={options}>
-          <TableHeaderColumn dataField='itemname' isKey>ITEM NAME</TableHeaderColumn>
-          <TableHeaderColumn dataField='timestamp'>ITEM TIME STAMP</TableHeaderColumn>
-          <TableHeaderColumn dataField='itemoriginalprice'>ORIGINAL PRICE</TableHeaderColumn>
-          <TableHeaderColumn dataField='gstonitem'>GST IN %</TableHeaderColumn>
+          <TableHeaderColumn dataField='itemname' isKey>NAME</TableHeaderColumn>
+          <TableHeaderColumn dataField='timestamp'>TIME</TableHeaderColumn>
+          <TableHeaderColumn dataField='itemoriginalprice'>PRICE</TableHeaderColumn>
+          <TableHeaderColumn dataField='gstonitem'>GST %</TableHeaderColumn>
           <TableHeaderColumn dataField='priceaftergst'>PRICE WITH GST</TableHeaderColumn>
         </BootstrapTable>
         <Row className="margin-top-bottom-20">

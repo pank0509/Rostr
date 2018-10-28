@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { RadialChart } from 'react-vis';
+import { nonzeroandnonnegative } from '../helper/Validation';
 import {
   ItemName,
   ItemOriginalPrice,
@@ -31,6 +32,9 @@ function mapDispatchToProps(dispatch) {
   }
 }
 class LandingPage extends React.Component {
+  state = {
+    notavalidcast: false,
+  }
   componentDidMount() {
     this.props.getlistofstoreditem();
     this.props.getvalueforpichart();
@@ -49,6 +53,17 @@ class LandingPage extends React.Component {
     this.props.getlistofstoreditem();
     this.props.getvalueforpichart();
   }
+  handlePriceValidation = () => {
+    if (nonzeroandnonnegative(this.props.addingitem.itemoriginalprice)) {
+      this.setState({
+        notavalidcast: true,
+      })
+    } else {
+      this.setState({
+        notavalidcast: false,
+      })
+    }
+  }
   render() {
     const { itemname, itemoriginalprice, gstonitem } = this.props.addingitem;
     const data = this.props.addingitem.chartdataresponse ? this.props.addingitem.chartdataresponse : [];
@@ -58,22 +73,25 @@ class LandingPage extends React.Component {
           <div className="text-align-center font24 bold margin-top-bottom-20">
             ITEM IN THE STORE
           </div>
+          <label>ITEM NAME</label>
           <input
             type="text"
             required
-            placeholder="Enter Item"
             value={itemname ? itemname : ''}
             className="form-control margin-top-bottom-10"
             onChange={this.handleItemName}
           />
+          <label>ITEM PRICE</label>
           <input
             type="number"
             required
             value={itemoriginalprice ? itemoriginalprice : ''}
-            placeholder="Enter Price"
             className="form-control margin-top-bottom-10"
             onChange={this.handleItemPrice}
+            onBlur={this.handlePriceValidation}
           />
+          <div className="font-bold margin-top-bottom-5 red padding-left-5">{this.state.notavalidcast ? 'Not a vaild cost' : null}</div>
+          <label>SELECT GST IN %</label>
           <select
             className="form-control"
             value={gstonitem}
@@ -97,6 +115,9 @@ class LandingPage extends React.Component {
               width={300}
               showLabels={true}
               height={300}
+              labelsStyle={{
+                fontSize: '18px'
+              }}
             />
           </div>
           <div>
