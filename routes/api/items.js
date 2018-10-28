@@ -27,6 +27,11 @@ router.get("/piechart", (req, res) => {
         ]
     ).then(item => res.send(item));
 });
+router.post("/delete", (req, res) => {
+    ItemStorage.findOneAndDelete({ _id: req.body._id })
+        .then(res.json({ message: 'Successfully deleted' }));
+})
+
 router.get("/getlistofitem", (req, res) => {
     ItemStorage.find().then(item => res.send(item));
 });

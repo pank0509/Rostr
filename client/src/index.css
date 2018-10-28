@@ -13,6 +13,9 @@ body {
 .white {
   color: #ffffff;
 }
+.bg-teal {
+  background-color: #00B9CA;
+}
 .red {
   color: #FA431C;
 }
@@ -657,6 +660,9 @@ body {
 }
 .flex-wrap {
   flex-wrap: wrap;
+}
+.box-shadow {
+  box-shadow: 0 0 3px rgba(0, 0, 0, .30);
 }
 .card-style {
   background-color: white;

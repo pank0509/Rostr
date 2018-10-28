@@ -10,6 +10,9 @@ const GET_VALUE_FOR_CHART_FAILURE = 'GET_VALUE_FOR_CHART_FAILURE';
 const GET_VALUE_FOR_TABLE = 'GET_VALUE_FOR_TABLE';
 const GET_VALUE_FOR_TABLE_SUCCESS = 'GET_VALUE_FOR_TABLE_SUCCESS';
 const GET_VALUE_FOR_TABLE_FAILURE = 'GET_VALUE_FOR_TABLE_FAILURE';
+const DELETE_REQUEST = 'DELETE_REQUEST';
+const DELETE_SUCCESS = 'DELETE_SUCCESS';
+const DELETE_FAILURE = 'DELETE_FAILURE';
 
 /* Initial State  */
 
@@ -31,6 +34,11 @@ const initialState = {
   tabledataloading: false,
   tabledataloaded: false,
   tabledatafailtoload: false,
+  /* Delete Request */
+  deleteloading: false,
+  deleteloaded: false,
+  deletefailed: false,
+  deleteresponse: null,
 };
 
 /* These are reducer */
@@ -65,6 +73,9 @@ export default function reducer(state = initialState, action = {}) {
         addingitem: false,
         addeditem: true,
         failtoadd: false,
+        itemname: null,
+        itemoriginalprice: null,
+        gstonitem: 5,
       }
     case ON_SUBMIT_FAILURE:
       return {
@@ -72,6 +83,9 @@ export default function reducer(state = initialState, action = {}) {
         addingitem: false,
         addeditem: false,
         failtoadd: true,
+        itemname: null,
+        itemoriginalprice: null,
+        gstonitem: 5,
       }
     case GET_VALUE_FOR_CHART:
       return {
@@ -81,7 +95,8 @@ export default function reducer(state = initialState, action = {}) {
         chartdatafailed: false,
       }
     case GET_VALUE_FOR_CHART_SUCCESS:
-      const result = action.result.map((keys) => {
+      const chartData = action.result ? action.result : [];
+      const result = chartData.map((keys) => {
         const object = Object.assign({}, keys);
         object.label = `${keys._id} %gst`;
         return object;
@@ -121,6 +136,28 @@ export default function reducer(state = initialState, action = {}) {
         tabledataloading: false,
         tabledataloaded: false,
         tabledatafailtoload: true,
+      }
+    case DELETE_REQUEST:
+      return {
+        ...state,
+        deleteloading: true,
+        deleteloaded: false,
+        deletefailed: false,
+      }
+    case DELETE_SUCCESS:
+      return {
+        ...state,
+        deleteloading: false,
+        deleteloaded: true,
+        deletefailed: false,
+        deleteresponse: action.result
+      }
+    case DELETE_FAILURE:
+      return {
+        ...state,
+        deleteloading: false,
+        deleteloaded: false,
+        deletefailed: true,
       }
     default:
       return state;
@@ -176,5 +213,14 @@ export function getlistofstoreditem() {
   return {
     types: [GET_VALUE_FOR_TABLE, GET_VALUE_FOR_TABLE_SUCCESS, GET_VALUE_FOR_TABLE_FAILURE],
     promise: (client) => client.get('/api/getlistofitem')
+  }
+}
+export function deleterequest(value) {
+  const data = {
+    _id: value
+  }
+  return {
+    types: [DELETE_REQUEST, DELETE_SUCCESS, DELETE_FAILURE],
+    promise: (client) => client.post('/api/delete', { data })
   }
 }

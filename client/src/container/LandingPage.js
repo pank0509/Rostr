@@ -8,10 +8,10 @@ import {
   gstOnItem,
   onitemsubmit,
   getlistofstoreditem,
-  getvalueforpichart
+  getvalueforpichart,
+  deleterequest
 } from '../Redux/modules/addingitem';
 import Table from '../component/TableRow';
-// const myData = [{ angle: 1, label: 'first' }, { angle: 5, label: 'second' }, { angle: 2, label: 'third' }]
 const gstOption = [{ value: 5, label: '5 %' }, { value: 12, label: '12 %' }, { value: 18, label: '18 %' }, { value: 28, label: '28 %' }];
 function mapStateToProps(state) {
   return {
@@ -26,6 +26,7 @@ function mapDispatchToProps(dispatch) {
     gstOnItem: (value) => dispatch(gstOnItem(value)),
     onitemsubmit: (value) => dispatch(onitemsubmit(value)),
     getlistofstoreditem: (value) => dispatch(getlistofstoreditem(value)),
+    deleterequest: (value) => dispatch(deleterequest(value)),
     getvalueforpichart: (value) => dispatch(getvalueforpichart(value))
   }
 }
@@ -49,12 +50,14 @@ class LandingPage extends React.Component {
     this.props.getvalueforpichart();
   }
   render() {
-    console.log('This is in landing page', this.props.addingitem);
     const { itemname, itemoriginalprice, gstonitem } = this.props.addingitem;
     const data = this.props.addingitem.chartdataresponse ? this.props.addingitem.chartdataresponse : [];
     return (
       <div>
-        <div className="card-style">
+        <div className="card-style padding-20">
+          <div className="text-align-center font24 bold margin-top-bottom-20">
+            ITEM IN THE STORE
+          </div>
           <input
             type="text"
             required
@@ -80,12 +83,15 @@ class LandingPage extends React.Component {
             ))
             }
           </select>
-          <div>
-            <button onClick={this.handleAddItemButtonClicked}>
-              Add Item to List
+          <div className="display-flex-justify-content-center margin-top-bottom-20">
+            <button
+              onClick={this.handleAddItemButtonClicked}
+              className="bg-teal white border-none bold border-curved5 padding-10 box-shadow"
+            >
+              ADD ITEM TO LIST
             </button>
           </div>
-          <div>
+          <div className="display-flex-justify-content-center margin-top-bottom-20">
             <RadialChart
               data={data}
               width={300}
@@ -95,6 +101,9 @@ class LandingPage extends React.Component {
           </div>
           <div>
             <Table
+              deleterequest={this.props.deleterequest}
+              getlistofstoreditem={this.props.getlistofstoreditem}
+              getvalueforpichart={this.props.getvalueforpichart}
               data={this.props.addingitem.tabledataresponse ? this.props.addingitem.tabledataresponse : []}
             />
           </div>
@@ -110,6 +119,7 @@ LandingPage.propTypes = {
   onitemsubmit: PropTypes.func,
   getlistofstoreditem: PropTypes.func,
   getvalueforpichart: PropTypes.func,
+  deleterequest: PropTypes.func,
   addingitem: PropTypes.object,
 }
 LandingPage.defaultProps = {
@@ -119,6 +129,7 @@ LandingPage.defaultProps = {
   onitemsubmit: () => { },
   getlistofstoreditem: () => { },
   getvalueforpichart: () => { },
+  deleterequest: () => { },
   addingitem: {},
 }
 export default connect(mapStateToProps, mapDispatchToProps)(LandingPage);
