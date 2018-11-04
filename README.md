@@ -8,6 +8,11 @@ npm run dev
 
 once this is good to go then open port 3000 on the browser.
 
+Technology.
+
+1 Used react, redux for frontend and express and mongoDB for backend.
+2. The Data end the page are coming from the backend.
+
 Feature's 
 
 1. User can search for form the sub-menu by giving the value in input field like b for belt. Similary 7 to 700-800 range.
