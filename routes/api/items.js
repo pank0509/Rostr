@@ -1,38 +1,39 @@
 const express = require("express");
+var async = require('async');
 const router = express.Router();
-const ItemStorage = require("../../models/ItemStorageSchema.js");
+const StateList = require("../../models/StateSchema.js");
+const DistrictList = require("../../models/DistrictSchema.js");
 
-router.post("/store", (req, res) => {
-    ItemStorage({
-        itemname: req.body.itemname,
-        itemoriginalprice: req.body.itemoriginalprice,
-        gstonitem: req.body.gstonitem,
-        priceaftergst: req.body.priceaftergst,
-        timestamp: req.body.timestamp
+router.post("/insertinstate", (req, res) => {
+    StateList({
+        statename: req.body.statename,
+        sid: req.body.sid,
     })
         .save()
         .then(item => res.json(item));
 });
-router.get("/piechart", (req, res) => {
-    ItemStorage.aggregate(
-        [
-            {
-                $group: {
-                    _id: "$gstonitem",
-                    angle: {
-                        $sum: 1
-                    },
-                }
-            }
-        ]
-    ).then(item => res.send(item));
+router.post("/insertindistrict", (req, res) => {
+    DistrictList({
+        districtname: req.body.districtname,
+        did: req.body.did,
+    })
+        .save()
+        .then(item => res.json(item));
 });
-router.post("/delete", (req, res) => {
-    ItemStorage.findOneAndDelete({ _id: req.body._id })
-        .then(res.json({ message: 'Successfully deleted' }));
-})
+router.get("/getdistrictlist", (req, res) => {
+    const DistrictData = DistrictList.find({});
+    const StateData = StateList.find({});
+    const resources = {
+        range: DistrictData.exec.bind(DistrictData),
+        cloth: StateData.exec.bind(StateData)
 
-router.get("/getlistofitem", (req, res) => {
-    ItemStorage.find().then(item => res.send(item));
-});
+    };
+    async.parallel(resources, function (error, results) {
+        if (error) {
+            res.status(500).send(error);
+            return;
+        }
+        res.send(results);
+    })
+})
 module.exports = router;

@@ -1,19 +1,17 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { RadialChart } from 'react-vis';
-import { nonzeroandnonnegative } from '../helper/Validation';
+import MenuAndSubmenu from '../component/MenuAndSubmenu';
 import {
-  ItemName,
-  ItemOriginalPrice,
-  gstOnItem,
-  onitemsubmit,
-  getlistofstoreditem,
-  getvalueforpichart,
-  deleterequest
+  getlistofRange,
+  changeOfRangeData,
+  removeRangeData,
+  changeOfClothData,
+  removeClothData,
+  rangeLengthFunc,
+  clothLengthFunc,
+  handldeFilterButtonClicked
 } from '../Redux/modules/addingitem';
-import Table from '../component/TableRow';
-const gstOption = [{ value: 5, label: '5 %' }, { value: 12, label: '12 %' }, { value: 18, label: '18 %' }, { value: 28, label: '28 %' }];
 function mapStateToProps(state) {
   return {
     addingitem: state.addingitem,
@@ -22,135 +20,58 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    ItemName: (value) => dispatch(ItemName(value)),
-    ItemOriginalPrice: (value) => dispatch(ItemOriginalPrice(value)),
-    gstOnItem: (value) => dispatch(gstOnItem(value)),
-    onitemsubmit: (value) => dispatch(onitemsubmit(value)),
-    getlistofstoreditem: (value) => dispatch(getlistofstoreditem(value)),
-    deleterequest: (value) => dispatch(deleterequest(value)),
-    getvalueforpichart: (value) => dispatch(getvalueforpichart(value))
+    handldeFilterButtonClicked: (value) => dispatch(handldeFilterButtonClicked(value)),
+    getlistofRange: (value) => dispatch(getlistofRange(value)),
+    changeOfRangeData: (value) => dispatch(changeOfRangeData(value)),
+    removeRangeData: (value) => dispatch(removeRangeData(value)),
+    changeOfClothData: (value) => dispatch(changeOfClothData(value)),
+    removeClothData: (value) => dispatch(removeClothData(value)),
+    rangeLengthFunc: (value) => dispatch(rangeLengthFunc(value)),
+    clothLengthFunc: (value) => dispatch(clothLengthFunc(value))
   }
 }
 class LandingPage extends React.Component {
-  state = {
-    notavalidcast: false,
-  }
   componentDidMount() {
-    this.props.getlistofstoreditem();
-    this.props.getvalueforpichart();
-  }
-  handleItemName = (event) => {
-    this.props.ItemName(event.target.value);
-  }
-  handleItemPrice = (event) => {
-    this.props.ItemOriginalPrice(event.target.value)
-  }
-  handleGst = (event) => {
-    this.props.gstOnItem(event.target.value)
-  }
-  handleAddItemButtonClicked = () => {
-    this.props.onitemsubmit(this.props.addingitem);
-    this.props.getlistofstoreditem();
-    this.props.getvalueforpichart();
-  }
-  handlePriceValidation = () => {
-    if (nonzeroandnonnegative(this.props.addingitem.itemoriginalprice)) {
-      this.setState({
-        notavalidcast: true,
-      })
-    } else {
-      this.setState({
-        notavalidcast: false,
-      })
-    }
+    this.props.getlistofRange();
   }
   render() {
-    const { itemname, itemoriginalprice, gstonitem } = this.props.addingitem;
-    const data = this.props.addingitem.chartdataresponse ? this.props.addingitem.chartdataresponse : [];
     return (
       <div>
-        <div className="card-style padding-20">
-          <div className="text-align-center font24 bold margin-top-bottom-20">
-            ITEM IN THE STORE
-          </div>
-          <label>ITEM NAME</label>
-          <input
-            type="text"
-            required
-            value={itemname ? itemname : ''}
-            className="form-control margin-top-bottom-10"
-            onChange={this.handleItemName}
-          />
-          <label>ITEM PRICE</label>
-          <input
-            type="number"
-            required
-            value={itemoriginalprice ? itemoriginalprice : ''}
-            className="form-control margin-top-bottom-10"
-            onChange={this.handleItemPrice}
-            onBlur={this.handlePriceValidation}
-          />
-          <div className="font-bold margin-top-bottom-5 red padding-left-5">{this.state.notavalidcast ? 'Not a vaild cost' : null}</div>
-          <label>SELECT GST IN %</label>
-          <select
-            className="form-control"
-            value={gstonitem}
-            onChange={this.handleGst}>
-            {gstOption.map(keys => (
-              <option key={keys.value}>{keys.value}</option>
-            ))
-            }
-          </select>
-          <div className="display-flex-justify-content-center margin-top-bottom-20">
-            <button
-              onClick={this.handleAddItemButtonClicked}
-              className="bg-teal white border-none bold border-curved5 padding-10 box-shadow"
-            >
-              ADD ITEM TO LIST
-            </button>
-          </div>
-          <div className="display-flex-justify-content-center margin-top-bottom-20">
-            <RadialChart
-              data={data}
-              width={300}
-              showLabels={true}
-              height={300}
-              labelsStyle={{
-                fontSize: '18px'
-              }}
-            />
-          </div>
-          <div>
-            <Table
-              deleterequest={this.props.deleterequest}
-              getlistofstoreditem={this.props.getlistofstoreditem}
-              getvalueforpichart={this.props.getvalueforpichart}
-              data={this.props.addingitem.tabledataresponse ? this.props.addingitem.tabledataresponse : []}
-            />
-          </div>
-        </div>
+        <MenuAndSubmenu
+          removeRangeData={this.props.removeRangeData}
+          changeOfRangeData={this.props.changeOfRangeData}
+          addingitem={this.props.addingitem}
+          changeOfClothData={this.props.changeOfClothData}
+          removeClothData={this.props.removeClothData}
+          applyCityAndSpecialtyFilter={this.props.applyCityAndSpecialtyFilter}
+          handldeFilterButtonClicked={this.props.handldeFilterButtonClicked}
+          clothLengthFunc={this.props.clothLengthFunc}
+          rangeLengthFunc={this.props.rangeLengthFunc}
+        />
       </div>
     );
   }
 }
 LandingPage.propTypes = {
-  ItemName: PropTypes.func,
-  ItemOriginalPrice: PropTypes.func,
-  gstOnItem: PropTypes.func,
-  onitemsubmit: PropTypes.func,
-  getlistofstoreditem: PropTypes.func,
-  getvalueforpichart: PropTypes.func,
-  deleterequest: PropTypes.func,
+  getlistofRange: PropTypes.func,
   addingitem: PropTypes.object,
+  changeOfRangeData: PropTypes.func,
+  removeRangeData: PropTypes.func,
+  changeOfClothData: PropTypes.func,
+  removeClothData: PropTypes.func,
+  rangeLengthFunc: PropTypes.func,
+  clothLengthFunc: PropTypes.func,
+  handldeFilterButtonClicked: PropTypes.func
 }
 LandingPage.defaultProps = {
-  ItemName: () => { },
-  ItemOriginalPrice: () => { },
-  gstOnItem: () => { },
-  onitemsubmit: () => { },
-  getlistofstoreditem: () => { },
-  getvalueforpichart: () => { },
-  deleterequest: () => { },
+  getlistofRange: () => { },
   addingitem: {},
+  changeOfRangeData: () => { },
+  removeRangeData: () => { },
+  changeOfClothData: () => { },
+  removeClothData: () => { },
+  rangeLengthFunc: () => { },
+  clothLengthFunc: () => { },
+  handldeFilterButtonClicked: () => { }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(LandingPage);
