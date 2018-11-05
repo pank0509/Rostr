@@ -1,226 +1,159 @@
-const ITEM_NAME = 'ITEM_NAME';
-const ITEM_ORIGINAL_PRICE = 'ITEM_ORIGINAL_PRICE';
-const GST_ON_THE_ITEM = 'GST_ON_THE_ITEM';
-const ON_SUBMIT_REQUEST = 'ON_SUBMIT_REQUEST';
-const ON_SUBMIT_SUCCESS = 'ON_SUBMIT_SUCCESS';
-const ON_SUBMIT_FAILURE = 'ON_SUBMIT_FAILURE';
-const GET_VALUE_FOR_CHART = 'GET_VALUE_FOR_CHART';
-const GET_VALUE_FOR_CHART_SUCCESS = 'GET_VALUE_FOR_CHART_SUCCESS';
-const GET_VALUE_FOR_CHART_FAILURE = 'GET_VALUE_FOR_CHART_FAILURE';
-const GET_VALUE_FOR_TABLE = 'GET_VALUE_FOR_TABLE';
-const GET_VALUE_FOR_TABLE_SUCCESS = 'GET_VALUE_FOR_TABLE_SUCCESS';
-const GET_VALUE_FOR_TABLE_FAILURE = 'GET_VALUE_FOR_TABLE_FAILURE';
-const DELETE_REQUEST = 'DELETE_REQUEST';
-const DELETE_SUCCESS = 'DELETE_SUCCESS';
-const DELETE_FAILURE = 'DELETE_FAILURE';
-
+const CLOTH_DATA = 'CLOTH_DATA';
+const REMOVE_CLOTH_DATA = 'REMOVE_CLOTH_DATA';
+const RANGE_DATA = 'RANGE_DATA';
+const REMOVE_RANGE_DATA = 'REMOVE_RANGE_DATA';
+const CLOTH_LENGTH = 'CLOTH_LENGTH';
+const RANGE_LENGTH = 'RANGE_LENGTH';
+const LOAD_DATA_REQUEST = 'LOAD_DATA_REQUEST';
+const LOAD_DATA_SUCCESS = 'LOAD_DATA_SUCCESS';
+const LOAD_DATA_FAILURE = 'LOAD_DATA_FAILURE';
+const FINAL_VALUE = 'FINAL_VALUE';
 /* Initial State  */
 
 const initialState = {
-  itemname: null,
-  itemoriginalprice: null,
-  gstonitem: 5,
-  submitresponse: null,
-  addingitem: false,
-  addeditem: false,
-  failtoadd: false,
-  /* Chart Data */
-  chartdataresponse: null,
-  chartdataloading: false,
-  chartdataloaded: false,
-  chartdatafailed: false,
-  /* Table Data */
-  tabledataresponse: null,
-  tabledataloading: false,
-  tabledataloaded: false,
-  tabledatafailtoload: false,
-  /* Delete Request */
-  deleteloading: false,
-  deleteloaded: false,
-  deletefailed: false,
-  deleteresponse: null,
+  clothLength: 5,
+  rangeLength: 5,
+  checkboxresponse: {
+    clothCollectedData: [],
+    priceCollectedData: [],
+  },
+  loading: false,
+  loaded: false,
+  failed: false,
+  dataResponse: null,
 };
 
 /* These are reducer */
 
 export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
-    case ITEM_NAME:
+    case LOAD_DATA_REQUEST:
       return {
         ...state,
-        itemname: action.result,
+        loading: true,
+        loaded: false,
+        failed: false,
+      }
+    case LOAD_DATA_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        failed: false,
+        dataResponse: action.result,
+      }
+    case LOAD_DATA_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        loaded: false,
+        failed: true,
+      }
+    case CLOTH_DATA:
+      return {
+        ...state,
+        checkboxresponse: {
+          ...state.checkboxresponse,
+          clothCollectedData: [...state.checkboxresponse.clothCollectedData, action.result],
+        }
       };
-    case ITEM_ORIGINAL_PRICE:
+    case REMOVE_CLOTH_DATA:
+      const indexOfActionResultForCloth = state.checkboxresponse.clothCollectedData.indexOf(action.result);
+      const updatedCloth = state.checkboxresponse.clothCollectedData;
+      const removedItem = updatedCloth.splice(indexOfActionResultForCloth, 1);
+      console.log(removedItem);
       return {
         ...state,
-        itemoriginalprice: action.result,
+        checkboxresponse: {
+          ...state.checkboxresponse,
+          clothCollectedData: updatedCloth,
+        }
       };
-    case GST_ON_THE_ITEM:
+    case RANGE_DATA:
       return {
         ...state,
-        gstonitem: action.result,
+        checkboxresponse: {
+          ...state.checkboxresponse,
+          priceCollectedData: [...state.checkboxresponse.priceCollectedData, action.result]
+        }
       }
-    case ON_SUBMIT_REQUEST:
+    case REMOVE_RANGE_DATA:
+      const indexOfActionResultForRange = state.checkboxresponse.priceCollectedData.indexOf(action.result);
+      const updatedPrice = state.checkboxresponse.priceCollectedData;
+      const removedItemRange = updatedPrice.splice(indexOfActionResultForRange, 1);
+      console.log(removedItemRange);
       return {
         ...state,
-        addingitem: true,
-        addeditem: false,
-        failtoadd: false,
+        checkboxresponse: {
+          ...state.checkboxresponse,
+          priceCollectedData: updatedPrice,
+        }
+      };
+    case CLOTH_LENGTH:
+      return {
+        ...state,
+        clothLength: action.result,
       }
-    case ON_SUBMIT_SUCCESS:
+    case RANGE_LENGTH:
       return {
         ...state,
-        addingitem: false,
-        addeditem: true,
-        failtoadd: false,
-        itemname: null,
-        itemoriginalprice: null,
-        gstonitem: 5,
-      }
-    case ON_SUBMIT_FAILURE:
-      return {
-        ...state,
-        addingitem: false,
-        addeditem: false,
-        failtoadd: true,
-        itemname: null,
-        itemoriginalprice: null,
-        gstonitem: 5,
-      }
-    case GET_VALUE_FOR_CHART:
-      return {
-        ...state,
-        chartdataloading: true,
-        chartdataloaded: false,
-        chartdatafailed: false,
-      }
-    case GET_VALUE_FOR_CHART_SUCCESS:
-      const chartData = action.result ? action.result : [];
-      const result = chartData.map((keys) => {
-        const object = Object.assign({}, keys);
-        object.label = `${keys._id} %gst`;
-        return object;
-      })
-      return {
-        ...state,
-        chartdataresponse: result,
-        chartdataloading: false,
-        chartdataloaded: true,
-        chartdatafailed: false,
-      }
-    case GET_VALUE_FOR_CHART_FAILURE:
-      return {
-        ...state,
-        chartdataloading: false,
-        chartdataloaded: false,
-        chartdatafailed: true,
-      }
-    case GET_VALUE_FOR_TABLE:
-      return {
-        ...state,
-        tabledataloading: true,
-        tabledataloaded: false,
-        tabledatafailtoload: false,
-      }
-    case GET_VALUE_FOR_TABLE_SUCCESS:
-      return {
-        ...state,
-        tabledataresponse: action.result,
-        tabledataloading: false,
-        tabledataloaded: true,
-        tabledatafailtoload: false,
-      }
-    case GET_VALUE_FOR_TABLE_FAILURE:
-      return {
-        ...state,
-        tabledataloading: false,
-        tabledataloaded: false,
-        tabledatafailtoload: true,
-      }
-    case DELETE_REQUEST:
-      return {
-        ...state,
-        deleteloading: true,
-        deleteloaded: false,
-        deletefailed: false,
-      }
-    case DELETE_SUCCESS:
-      return {
-        ...state,
-        deleteloading: false,
-        deleteloaded: true,
-        deletefailed: false,
-        deleteresponse: action.result
-      }
-    case DELETE_FAILURE:
-      return {
-        ...state,
-        deleteloading: false,
-        deleteloaded: false,
-        deletefailed: true,
+        rangeLength: action.result,
       }
     default:
       return state;
   }
 }
 
+export function changeOfRangeData(value) {
+  return {
+    type: RANGE_DATA,
+    result: value,
+  };
+}
+export function removeRangeData(value) {
+  return {
+    type: REMOVE_RANGE_DATA,
+    result: value
+  };
+}
+export function changeOfClothData(value) {
+  return {
+    type: CLOTH_DATA,
+    result: value,
+  };
+}
+export function removeClothData(value) {
+  return {
+    type: REMOVE_CLOTH_DATA,
+    result: value
+  };
+}
+
+export function clothLengthFunc(value) {
+  return {
+    type: CLOTH_LENGTH,
+    result: value,
+  };
+}
+export function rangeLengthFunc(value) {
+  return {
+    type: RANGE_LENGTH,
+    result: value,
+  };
+}
+
+export function handldeFilterButtonClicked(value) {
+  console.log('This is the value of the filter after button is clicked', value);
+  return {
+    type: FINAL_VALUE,
+    result: value
+  };
+}
 /* These are action */
 
-export function ItemName(value) {
+export function getlistofRange() {
   return {
-    type: ITEM_NAME,
-    result: value
-  }
-}
-export function ItemOriginalPrice(value) {
-  return {
-    type: ITEM_ORIGINAL_PRICE,
-    result: value,
-  }
-}
-export function gstOnItem(value) {
-  return {
-    type: GST_ON_THE_ITEM,
-    result: value,
-  }
-}
-
-export function onitemsubmit(value) {
-  const itemoriginalpriceInNumber = Number(value.itemoriginalprice);
-  const gstonitemInNumber = Number(value.gstonitem);
-  const gstcal = (itemoriginalpriceInNumber * gstonitemInNumber) / 100;
-  const priceafteraddinggst = itemoriginalpriceInNumber + gstcal;
-  const currenttimestamp = new Date();
-  const data = {
-    itemname: value.itemname,
-    itemoriginalprice: itemoriginalpriceInNumber,
-    gstonitem: gstonitemInNumber,
-    priceaftergst: priceafteraddinggst,
-    timestamp: currenttimestamp,
-  }
-  return {
-    types: [ON_SUBMIT_REQUEST, ON_SUBMIT_SUCCESS, ON_SUBMIT_FAILURE],
-    promise: (client) => client.post('/api/store', { data })
-  }
-}
-export function getvalueforpichart() {
-  return {
-    types: [GET_VALUE_FOR_CHART, GET_VALUE_FOR_CHART_SUCCESS, GET_VALUE_FOR_CHART_FAILURE],
-    promise: (client) => client.get('/api/piechart')
-  }
-}
-export function getlistofstoreditem() {
-  return {
-    types: [GET_VALUE_FOR_TABLE, GET_VALUE_FOR_TABLE_SUCCESS, GET_VALUE_FOR_TABLE_FAILURE],
-    promise: (client) => client.get('/api/getlistofitem')
-  }
-}
-export function deleterequest(value) {
-  const data = {
-    _id: value
-  }
-  return {
-    types: [DELETE_REQUEST, DELETE_SUCCESS, DELETE_FAILURE],
-    promise: (client) => client.post('/api/delete', { data })
+    types: [LOAD_DATA_REQUEST, LOAD_DATA_SUCCESS, LOAD_DATA_FAILURE],
+    promise: (client) => client.get('/api/getdistrictlist')
   }
 }

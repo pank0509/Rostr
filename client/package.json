@@ -62,6 +62,7 @@
     "start": "node scripts/start.js",
     "build": "node scripts/build.js"
   },
+  "proxy": "http://localhost:8000",
   "babel": {
     "presets": [
       "react-app"
